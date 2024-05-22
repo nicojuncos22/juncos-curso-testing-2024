@@ -16,7 +16,7 @@ class Test:
     buscador = (By.XPATH, "//input[@placeholder='Buscar…']")
 
     @pytest.fixture(autouse=True)  # Se ejecuta antes y despues de cada test
-    def setup_teardown(self):
+    def setup_teardown(self):  # Esta funcion sirve para inicializar y cerrar el driver
         self.driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install())
         )
