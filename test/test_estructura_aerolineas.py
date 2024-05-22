@@ -1,11 +1,12 @@
 import pytest
 import allure
-import time
 from selenium import webdriver
-from webdriver_manager import chrome
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class Test:
@@ -25,14 +26,23 @@ class Test:
     destin_destac_b = (
         By.XPATH, "//a[@href='https://www.aerolineas.com.ar/compra-o-transferi-millas']")
 
+    @pytest.fixture(autouse=True)  # Se ejecuta antes y despues de cada test
+    def setup_teardown(self):  # Esta funcion sirve para inicializar y cerrar el driver
+        self.driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install())
+        )
+        self.driver.maximize_window()
+        self.driver.get("https://www.aerolineas.com.ar/")
+        yield  # Lo que este despues de yield se ejecuta despues de cada test
+        print("Cerrar Browser")
+        self.driver.quit()
+
     @allure.title("Validar estructura en aerolineas")
     @allure.description("Validar que se pueda ingresar a la pagina de aerolineas y que la estructura sea correcta")
     def test_estructura(self):
-        driver = webdriver.Chrome(service=Service(
-            chrome.ChromeDriverManager().install))
-        with allure.step("Nos dirigimos a la pagina aerolineas"):
-            driver.get("https://www.aerolineas.com.ar/")
-        time.sleep(3)
+        driver = self.driver
+        WebDriverWait(driver, 10).until(  # Espera hasta que el boton sea clickeable
+            EC.element_to_be_clickable(self.btn_log_in))
         with allure.step("Validar que se muestre el boton de log in"):
             btn_log_in = driver.find_element(*self.btn_log_in)
             assert btn_log_in.is_enabled  # Validar que el boton sea visible
