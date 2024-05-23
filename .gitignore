@@ -1,6 +1,5 @@
 .pytest_cache/
 .vscode/
 **/__pycache__/ 
-# **/ para buscar en todas las carpetas
 **/*.pyc
 autoTest/

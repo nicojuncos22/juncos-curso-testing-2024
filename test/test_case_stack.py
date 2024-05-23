@@ -15,8 +15,8 @@ class Test:
         By.XPATH, "//button[@id='onetrust-accept-btn-handler']")
     buscador = (By.XPATH, "//input[@placeholder='Buscar…']")
 
-    @pytest.fixture(autouse=True)  # Se ejecuta antes y despues de cada test
-    def setup_teardown(self):  # Esta funcion sirve para inicializar y cerrar el driver
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self):
         self.driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install())
         )
@@ -30,13 +30,10 @@ class Test:
     @allure.description("Validar que se pueda buscar en stackoverflow")
     def test_busqueda(self):
         driver = self.driver
-        WebDriverWait(driver, 10).until(  # Espera...
-            # ...hasta que el boton sea clickeable
+        WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable(self.btn_aceptar_cookies))
-        # Paso de allure para reporte
         with allure.step("Validar que se muestre el boton de aceptar cookies"):
             btn_cookies = driver.find_element(*self.btn_aceptar_cookies)
-            # si no estuviera assert, no se mostraria en el reporte
             assert btn_cookies.is_displayed()
         with allure.step("Aceptar cookies"):
             btn_cookies.click()
